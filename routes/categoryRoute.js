@@ -3,6 +3,10 @@ const router = express.Router();
 const { getCategories, getCategoryById, createCategory, deleteCategory, updateCategory } = require('../services/categoryService');
 const { getCategoryValidator, createCategoryValidator, updateCategoryValidator, deleteCategoryValidator } = require('../utils/validators/categoryValidator');
 
+const subcategoryRoute = require('./subCategoryRoute');
+
+router.use('/:categoryID/subcategories', subcategoryRoute);
+
 router.route('/')
     .get(getCategories)
     .post(createCategoryValidator, createCategory);

@@ -3,7 +3,11 @@ const morgan = require('morgan');
 const app = express();
 require('dotenv').config();
 require('./config/db');
+
 const categoryRoute = require('./routes/categoryRoute');
+const subCategoryRoute = require('./routes/subCategoryRoute')
+const brandRoute = require('./routes/brandRoute');
+
 const AppError = require('./utils/AppError');
 const globalErrorHandling = require('./middleware/globalError')
 
@@ -18,6 +22,12 @@ if (process.env.NODE_ENV === 'development') {
 
 
 app.use('/api/categories', categoryRoute);
+app.use('/api/subCategories', subCategoryRoute);
+app.use('/api/brands', brandRoute);
+
+
+
+
 //Global Middleware for not found routes
 app.use((req, res, next) => {
     return next(new AppError(`Can't find this route ${req.originalUrl} on the server`, 404))
@@ -32,9 +42,11 @@ app.use(globalErrorHandling);
 
 
 const port = process.env.PORT || 3000;
+
 const server = app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
+
 process.on('unhandledRejection', (err) => {
     console.error(`UnhandledRejection: ${err.name} | ${err.message}`);
     server.close(() => {

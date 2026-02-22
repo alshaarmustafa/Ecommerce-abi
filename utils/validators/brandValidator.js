@@ -1,24 +1,24 @@
 const { check } = require('express-validator');
 const validatorMiddleware = require('../../middleware/validatorMiddleware');
 
-exports.getCategoryValidator = [
-  check('id').isMongoId().withMessage('Invalid category id format'),
+exports.getBrandValidator = [
+  check('id').isMongoId().withMessage('Invalid brand id format'),
   validatorMiddleware,
 ];
 
-exports.createCategoryValidator = [
+exports.createBrandValidator = [
   check('name')
     .notEmpty()
-    .withMessage('Category required')
+    .withMessage('Brand required')
     .isLength({ min: 3 })
-    .withMessage('Too short category name')
+    .withMessage('Too short brand name')
     .isLength({ max: 32 })
-    .withMessage('Too long category name'),
+    .withMessage('Too long brand name'),
   validatorMiddleware,
 ];
 
-exports.updateCategoryValidator = [
-  check('id').isMongoId().withMessage('Invalid category id format'),
+exports.updateBrandValidator = [
+  check('id').isMongoId().withMessage('Invalid brand id format'),
   check('name')
     .notEmpty()
     .withMessage('Brand required')
@@ -30,7 +30,7 @@ exports.updateCategoryValidator = [
   validatorMiddleware,
 ];
 
-exports.deleteCategoryValidator = [
-  check('id').isMongoId().withMessage('Invalid category id format'),
+exports.deleteBrandValidator = [
+  check('id').isMongoId().withMessage('Invalid brand id format'),
   validatorMiddleware,
 ];

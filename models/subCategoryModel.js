@@ -4,11 +4,17 @@ const subCategorySchema = new mongoose.Schema({
 
     name: {
         type: String,
-        minlength: [3, 'Too short subCategory name'],
+        trim: true,
+        minlength: [2, 'Too short subCategory name'],
         maxlength: [32, 'Too long subCategory name'],
         required: [true, 'SubCategory required'],
         unique: [true, 'SubCategory must be unique'],
     },
+    slug: {
+        type: String,
+        lowercase: true,
+    },
+
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',
