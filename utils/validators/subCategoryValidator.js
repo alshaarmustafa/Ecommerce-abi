@@ -1,6 +1,6 @@
 const { check } = require('express-validator');
 const validatorMiddleware = require('../../middleware/validatorMiddleware');
-
+const Category = require("../../models/categoryModel")
 exports.getsubCategoryValidator = [
   check('id').isMongoId().withMessage('Invalid subCategory id format'),
   validatorMiddleware,
@@ -19,7 +19,17 @@ exports.createsubCategoryValidator = [
     .notEmpty()
     .withMessage("subCategory must be belong to a Category")
     .isMongoId()
-    .withMessage('Invalid Category id format'),
+    .withMessage('Invalid Category id format')
+    .custom((categoryId) => (
+      Category.findById(categoryId).then((result) => {
+        if (!result) {
+          return Promise.reject(
+            new Error(`No category for this id: ${categoryId}`)
+          );
+        }
+      })
+    )),
+  
   validatorMiddleware,
 ];
 
@@ -32,6 +42,12 @@ exports.updatesubCategoryValidator = [
     .withMessage('Too short brand name')
     .isLength({ max: 32 })
     .withMessage('Too long brand name'),
+  check("category")
+    .notEmpty()
+    .withMessage("subCategory must be belong to a Category")
+    .isMongoId()
+    .withMessage('Invalid Category id format'),
+  validatorMiddleware,
   validatorMiddleware,
 ];
 

@@ -1,7 +1,6 @@
 const slugify = require('slugify');
 const asyncHandler = require('express-async-handler');
 const SubCategory = require('../models/subCategoryModel');
-const Category = require('../models/categoryModel');
 const AppError = require('../utils/AppError');
 
 
@@ -11,10 +10,6 @@ const AppError = require('../utils/AppError');
 // @access  Private/Admin
 exports.createSubCategory = asyncHandler(async (req, res, next) => {
     const { name, category } = req.body;
-
-    const categoryExists = await Category.findById(category);
-
-    if (!categoryExists) return next(new AppError(`No category for this id ${category}`, 404))
 
     const subCategory = await SubCategory.create({ name, slug: slugify(name), category });
 
