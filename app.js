@@ -7,6 +7,7 @@ require('./config/db');
 const categoryRoute = require('./routes/categoryRoute');
 const subCategoryRoute = require('./routes/subCategoryRoute')
 const brandRoute = require('./routes/brandRoute');
+const productRoute = require('./routes/productRoute');
 
 const AppError = require('./utils/AppError');
 const globalErrorHandling = require('./middleware/globalError')
@@ -14,6 +15,7 @@ const globalErrorHandling = require('./middleware/globalError')
 // Middleware 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.set('query parser', 'extended');
 
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
@@ -24,6 +26,7 @@ if (process.env.NODE_ENV === 'development') {
 app.use('/api/categories', categoryRoute);
 app.use('/api/subCategories', subCategoryRoute);
 app.use('/api/brands', brandRoute);
+app.use('/api/products', productRoute);
 
 
 
