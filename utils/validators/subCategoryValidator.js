@@ -20,16 +20,13 @@ exports.createsubCategoryValidator = [
     .withMessage("subCategory must be belong to a Category")
     .isMongoId()
     .withMessage('Invalid Category id format')
-    .custom((categoryId) => (
-      Category.findById(categoryId).then((result) => {
-        if (!result) {
-          return Promise.reject(
-            new Error(`No category for this id: ${categoryId}`)
-          );
-        }
-      })
-    )),
-  
+    .custom(async (categoryId) => {
+      const result = await Category.findById(categoryId);
+      if (!result) {
+        throw new Error(`No category for this id: ${categoryId}`);
+      }
+      return true;
+    }),
   validatorMiddleware,
 ];
 
@@ -47,8 +44,7 @@ exports.updatesubCategoryValidator = [
     .withMessage("subCategory must be belong to a Category")
     .isMongoId()
     .withMessage('Invalid Category id format'),
-  validatorMiddleware,
-  validatorMiddleware,
+  validatorMiddleware
 ];
 
 exports.deletesubCategoryValidator = [
