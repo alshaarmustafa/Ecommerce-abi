@@ -2,6 +2,7 @@ const slugify = require('slugify');
 const asyncHandler = require('express-async-handler');
 const SubCategory = require('../models/subCategoryModel');
 const AppError = require('../utils/AppError');
+const ApiFeatures = require('../utils/apiFeatures');
 
 
 
@@ -20,14 +21,19 @@ exports.createSubCategory = asyncHandler(async (req, res, next) => {
 // @route   GET /api/subCategories
 // @access  Public
 exports.getsubCategories = asyncHandler(async (req, res) => {
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 5;
-    const skip = (page - 1) * limit;
+    //filtering by category id if exist in params (we will use this in get subCategories by category)
     let filterObject = {};
     if (req.params.categoryID) filterObject = { category: req.params.categoryID }
-
-    const subCategories = await SubCategory.find(filterObject).skip(skip).limit(limit).populate({ path: "category", select: 'name -_id' });
-    res.status(200).json({ results: subCategories.length, page, data: subCategories });
+    const countDocuments = await SubCategory.countDocuments();
+    //build query
+    const apiFeatures = new ApiFeatures(
+        SubCategory.find(filterObject).populate({ path: "category", select: 'name -_id' }),
+        req.query
+    ).search().filter().sort().limitFields().paginate(countDocuments)
+    //execute quer
+    const { mongooseQuery, paginationResult } = apiFeatures;
+    const subCategories = await mongooseQuery;
+    res.status(200).json({ results: subCategories.length, paginationResult, data: subCategories });
 });
 
 

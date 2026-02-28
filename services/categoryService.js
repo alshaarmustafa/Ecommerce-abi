@@ -1,17 +1,23 @@
 const slugify = require('slugify');
 const asyncHandler = require('express-async-handler');
 const Category = require('../models/categoryModel');
+const ApiFeatures = require('../utils/apiFeatures');
 
 
 // @desc    Get all categories
 // @route   GET /api/categories
 // @access  Public
 exports.getCategories = asyncHandler(async (req, res) => {
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 5;
-    const skip = (page - 1) * limit;
-    const categories = await Category.find({}).skip(skip).limit(limit);
-    res.status(200).json({ results: categories.length, page, data: categories });
+    const countDocuments = await Category.countDocuments();
+    //build query
+    const apiFeatures = new ApiFeatures(Category.find(), req.query).search().filter()
+        .sort().limitFields().paginate(countDocuments)
+
+
+    //execute quer
+    const { mongooseQuery, paginationResult } = apiFeatures;
+    const categories = await mongooseQuery;
+    res.status(200).json({ results: categories.length, paginationResult, data: categories });
 });
 
 

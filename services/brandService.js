@@ -1,17 +1,24 @@
 const slugify = require('slugify');
 const asyncHandler = require('express-async-handler');
 const Brand = require('../models/brandModel');
+const ApiFeatures = require('../utils/apiFeatures');
 
 
 // @desc    Get all brands
 // @route   GET /api/brands
 // @access  Public
 exports.getBrands = asyncHandler(async (req, res) => {
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 5;
-    const skip = (page - 1) * limit;
-    const brands = await Brand.find({}).skip(skip).limit(limit);
-    res.status(200).json({ results: brands.length, page, data: brands });
+    const countDocuments = await Brand.countDocuments();
+    //build query
+    const apiFeatures = new ApiFeatures(Brand.find(), req.query).search().filter()
+        .sort().limitFields().paginate(countDocuments)
+
+
+    //execute quer
+    const { mongooseQuery, paginationResult } = apiFeatures;
+    const brands = await mongooseQuery;
+
+    res.status(200).json({ results: brands.length, paginationResult, data: brands });
 });
 
 
