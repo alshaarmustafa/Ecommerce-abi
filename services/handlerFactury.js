@@ -16,7 +16,7 @@ exports.deleteOne = (Model) => asyncHandler(async (req, res) => {
 
 exports.updateOne = (Model) => asyncHandler(async (req, res) => {
 
-    const document = await Model.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const document = await Model.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     if (!document) {
         res.status(404).json({ message: `No document for this id ${id}` });
     }
@@ -38,7 +38,7 @@ exports.getOne = (Model) => asyncHandler(async (req, res) => {
     res.status(200).json({ data: document });
 });
 
-exports.getAll = (Model,modelName = '') => asyncHandler(async (req, res) => {
+exports.getAll = (Model, modelName = '') => asyncHandler(async (req, res) => {
     let filter = {};
     if (req.filterObj) {
         filter = req.filterObj;
