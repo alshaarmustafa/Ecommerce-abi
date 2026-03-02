@@ -5,7 +5,7 @@ const { getCategoryValidator, createCategoryValidator, updateCategoryValidator, 
 
 const subcategoryRoute = require('./subCategoryRoute');
 
-router.use('/:categoryID/subcategories', subcategoryRoute);
+router.use('/:categoryId/subcategories', subcategoryRoute);
 
 router.route('/')
     .get(getCategories)

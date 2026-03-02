@@ -1,11 +1,14 @@
 const express = require('express');
 const { createSubCategory, getsubCategories, getsubCategoryById, updatesubCategory, deletesubCategory } = require('../services/subCategoryService');
 const { createsubCategoryValidator, getsubCategoryValidator, updatesubCategoryValidator, deletesubCategoryValidator } = require('../utils/validators/subCategoryValidator');
-const setCategoryIdToBody = require('../middleware/setCategoryIdToBody');
 const router = express.Router({ mergeParams: true });
+const setCategoryIdToBody = require('../middleware/setCategoryIdToBody');
+const createFilterObj = require('../middleware/createFilterObj');
+
+
 router.route('/')
-    .get(getsubCategories)
-    .post(setCategoryIdToBody,createsubCategoryValidator, createSubCategory);
+.post(setCategoryIdToBody,createsubCategoryValidator, createSubCategory)
+.get(createFilterObj,getsubCategories)
 
 router.route('/:id')
     .get(getsubCategoryValidator,getsubCategoryById)
