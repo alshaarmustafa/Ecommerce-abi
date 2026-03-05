@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
 const app = express();
@@ -11,6 +12,9 @@ const productRoute = require('./routes/productRoute');
 
 const AppError = require('./utils/AppError');
 const globalErrorHandling = require('./middleware/globalError')
+
+
+app.use( express.static(path.join(__dirname, 'uploads')));
 
 // Middleware 
 app.use(express.json());
