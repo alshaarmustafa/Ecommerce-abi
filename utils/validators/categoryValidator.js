@@ -10,7 +10,7 @@ exports.getCategoryValidator = [
 exports.createCategoryValidator = [
   check('name')
     .notEmpty()
-    .withMessage('Category required')
+    .withMessage('Category name required')
     .isLength({ min: 3 })
     .withMessage('Too short category name')
     .isLength({ max: 32 })
@@ -25,16 +25,19 @@ exports.createCategoryValidator = [
 exports.updateCategoryValidator = [
   check('id').isMongoId().withMessage('Invalid category id format'),
   check('name')
-    .notEmpty()
-    .withMessage('Brand required')
+    .optional()
     .isLength({ min: 3 })
-    .withMessage('Too short brand name')
+    .withMessage('Too short category name')
     .isLength({ max: 32 })
-    .withMessage('Too long brand name'),
-  body("name").custom((value, { req }) => {
-    req.body.slug = slugify(value);
-    return true;
-  })
+    .withMessage('Too long category name'),
+  body("name")
+    .optional()
+    .notEmpty()
+    .withMessage('Category name required')
+    .custom((value, { req }) => {
+      req.body.slug = slugify(value);
+      return true;
+    })
   ,
   validatorMiddleware,
 ];

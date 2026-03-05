@@ -10,7 +10,7 @@ exports.getBrandValidator = [
 exports.createBrandValidator = [
   check('name')
     .notEmpty()
-    .withMessage('Brand required')
+    .withMessage('Brand name required')
     .isLength({ min: 3 })
     .withMessage('Too short brand name')
     .isLength({ max: 32 })
@@ -25,16 +25,19 @@ exports.createBrandValidator = [
 exports.updateBrandValidator = [
   check('id').isMongoId().withMessage('Invalid brand id format'),
   check('name')
+    .optional()
     .notEmpty()
-    .withMessage('Brand required')
+    .withMessage('Brand name required')
     .isLength({ min: 3 })
     .withMessage('Too short brand name')
     .isLength({ max: 32 })
     .withMessage('Too long brand name'),
-  body("name").custom((value, { req }) => {
-    req.body.slug = slugify(value);
-    return true;
-  })
+  body("name")
+    .optional()
+    .custom((value, { req }) => {
+      req.body.slug = slugify(value);
+      return true;
+    })
   ,
   validatorMiddleware,
 ];
