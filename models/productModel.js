@@ -77,10 +77,34 @@ const productSchema = new mongoose.Schema({
     },
 
 }, { timestamps: true });
+
 productSchema.pre(/^find/, function () {
     this.populate({ path: 'category', select: 'name -_id' })
         .populate({ path: 'subcategories', select: 'name -_id' })
 });
+const setImageUrl = (doc) => {
+    if (doc.imageCover) {
+        const imageURL = `${process.env.BASE_URL}/products/${doc.imageCover}`
+        doc.imageCover = imageURL
+    }
+    if (doc.images) {
+        const imageslist = [];
+        doc.images.forEach((image) => {
+            const imagesURL = `${process.env.BASE_URL}/products/${image}`
+            imageslist.push(imagesURL)
+        });
+        doc.images = imageslist
+    }
+}
+
+productSchema.post('init', (doc) => {
+    setImageUrl(doc)
+})
+productSchema.post('save', (doc) => {
+    setImageUrl(doc)
+})
+
+
 
 
 module.exports = mongoose.model('Product', productSchema);
