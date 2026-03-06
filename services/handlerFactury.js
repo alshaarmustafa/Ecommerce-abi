@@ -15,7 +15,9 @@ exports.deleteOne = (Model) => asyncHandler(async (req, res) => {
 });
 
 exports.updateOne = (Model) => asyncHandler(async (req, res) => {
-
+    //  Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'`
+    // returnDocument: 'before' // يرجع البيانات قبل التعديل
+    // returnDocument: 'after'  // يرجع البيانات بعد التعديل
     const document = await Model.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     if (!document) {
         res.status(404).json({ message: `No document for this id ${id}` });
