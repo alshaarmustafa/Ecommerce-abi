@@ -1,5 +1,3 @@
-const multer = require('multer');
-const AppError = require('../utils/AppError');
 const Product = require('../models/productModel');
 const factury = require('./handlerFactury')
 const { v4: uuidv4 } = require('uuid');
