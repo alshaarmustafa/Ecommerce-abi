@@ -9,12 +9,14 @@ const categoryRoute = require('./routes/categoryRoute');
 const subCategoryRoute = require('./routes/subCategoryRoute')
 const brandRoute = require('./routes/brandRoute');
 const productRoute = require('./routes/productRoute');
+const userRoute = require('./routes/userRoute');
+
 
 const AppError = require('./utils/AppError');
 const globalErrorHandling = require('./middleware/globalError')
 
 
-app.use( express.static(path.join(__dirname, 'uploads')));
+app.use(express.static(path.join(__dirname, 'uploads')));
 
 // Middleware 
 app.use(express.json());
@@ -31,6 +33,7 @@ app.use('/api/categories', categoryRoute);
 app.use('/api/subCategories', subCategoryRoute);
 app.use('/api/brands', brandRoute);
 app.use('/api/products', productRoute);
+app.use('/api/users', userRoute);
 
 
 
