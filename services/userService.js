@@ -29,17 +29,17 @@ exports.resizeImage = asyncHandler(async (req, res, next) => {
 
 // @desc    Get all users
 // @route   GET /api/users
-// @access  Private/Admin
+// @access  Private/Admin-Manager
 exports.getUsers = factury.getAll(User);
 
 // @desc    Get user by id
 // @route   GET /api/users/:id
-// @access  Private/Admin
+// @access  Private/Admin-Manager
 exports.getUserById = factury.getOne(User);
 
 // @desc    Create new user
 // @route   POST /api/users
-// @access  Private/Admin
+// @access  Private/Admin-Manager
 exports.createUser = factury.createOne(User);
 
 // @desc    Delete user
@@ -49,7 +49,7 @@ exports.deleteUser = factury.deleteOne(User);
 
 // @desc    Update user
 // @route   PUT /api/users/:id
-// @access  Private/Admin
+// @access  Private/Admin-Manager
 exports.updateUser = asyncHandler(async (req, res) => {
 
     const document = await User.findByIdAndUpdate(req.params.id, {
@@ -69,6 +69,7 @@ exports.updateUser = asyncHandler(async (req, res) => {
 
     res.status(200).json({ data: document });
 });
+
 exports.updateUserPassword = asyncHandler(async (req, res, next) => {
     if (!req.body || !req.body.password) {
         return res.status(400).json({ message: "Password is required" });

@@ -11,7 +11,18 @@ const {
     resizeImage
 } = require('../services/userService');
 
-const { getUserValidator, createUserValidator, updateUserValidator, deleteUserValidator, changeUserPasswordValidator } = require('../utils/validators/userValidator');
+const {
+    getUserValidator,
+    createUserValidator,
+    updateUserValidator,
+    deleteUserValidator,
+    changeUserPasswordValidator
+} = require('../utils/validators/userValidator');
+
+//Autentication & Authorization
+const { protect } = require('../middleware/verifyToken');
+const allowedTo = require('../utils/authorization/allowedTo');
+const userRoles = require('../utils/authorization/userRoles');
 
 
 
@@ -19,13 +30,46 @@ router.put('/changepassword/:id', changeUserPasswordValidator, updateUserPasswor
 
 
 router.route('/')
-    .get(getUsers)
-    .post(uploadUserImage, resizeImage, createUserValidator, createUser);
+
+    .get(
+        protect,
+        allowedTo(userRoles.ADMIN, userRoles.MANAGER),
+        getUsers
+    )
+
+    .post(
+        protect,
+        allowedTo(userRoles.ADMIN, userRoles.MANAGER),
+        uploadUserImage,
+        resizeImage,
+        createUserValidator,
+        createUser
+    );
 
 router.route('/:id')
-    .get(getUserValidator, getUserById)
-    .put(uploadUserImage, resizeImage, updateUserValidator, updateUser)
-    .delete(deleteUserValidator, deleteUser);
+
+    .get(
+        protect,
+        allowedTo(userRoles.ADMIN, userRoles.MANAGER),
+        getUserValidator,
+        getUserById
+    )
+
+    .put(
+        protect,
+        allowedTo(userRoles.ADMIN, userRoles.MANAGER),
+        uploadUserImage,
+        resizeImage,
+        updateUserValidator,
+        updateUser
+    )
+
+    .delete(
+        protect,
+        allowedTo(userRoles.ADMIN),
+        deleteUserValidator,
+        deleteUser
+    );
 
 
 

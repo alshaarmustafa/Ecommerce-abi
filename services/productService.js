@@ -58,12 +58,12 @@ exports.getProdcutById = factury.getOne(Product);
 
 // @desc    Create new product
 // @route   POST /api/products
-// @access  Private/Admin
+// @access  Private/Admin-Manager
 exports.createProduct = factury.createOne(Product);
 
 // @desc    Update product
 // @route   PUT /api/products/:id
-// @access  Private/Admin
+// @access  Private/Admin-Manager
 exports.updateProduct = factury.updateOne(Product);
 
 // @desc    Delete product
