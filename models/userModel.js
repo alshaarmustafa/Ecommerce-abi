@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const userRoles = require('../utils/authorization/userRoles');
 const userSchema = new mongoose.Schema({
 
     name: {
@@ -31,14 +32,19 @@ const userSchema = new mongoose.Schema({
         minLength: [6, 'Password must be at least 6 characters']
     },
     role: {
-        type: String,
-        enum: ['user', 'admin'],
-        default: 'user'
+        type: String, // ["USER", "ADMIN", "MANAGER"]
+        enum: [
+            userRoles.USER,
+            userRoles.ADMIN,
+            userRoles.MANAGER
+        ],
+        default: userRoles.USER
     },
     active: {
         type: Boolean,
         default: true
-    }
+    },
+    passwordChangedAt: Date
 
 
 },
