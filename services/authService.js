@@ -4,6 +4,8 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken');
 const AppError = require('../utils/AppError');
 const sendEmail = require('../utils/sendEamil');
+
+// @desc    Generate JWT Token
 const generateToken = (payload) => {
     return jwt.sign({ userId: payload }, process.env.JWT_SECRET_KEY, { expiresIn: process.env.JWT_EXPIRE_TIME })
 
@@ -72,4 +74,63 @@ exports.forgetPassword = asyncHandler(async (req, res, next) => {
         return next(new AppError("There is problem in sending email", 500))
     }
     res.status(200).json({ status: "Success", message: "Reset code sent to your email" });
+});
+
+// @desc    verify password reset code
+// @route   POST /api/auth/verifyPasswordResetCode
+// @access  Public
+exports.verifyPasswordResetCode = asyncHandler(async (req, res, next) => {
+    //1-Get user based on  email  
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+        return next(new AppError(`There is no user with email address ${req.body.email}`, 404))
+    }
+
+    //2-get reset code
+    const resetCode = req.body.resetCode;
+    const isValid = await bcrypt.compare(resetCode, user.passwordResetCode);
+    if (!isValid) {
+        return next(new AppError("incorrect Password reset code please try again", 400))
+    }
+    if (user.passwordResetCodeExpire < Date.now()) {
+        return next(new AppError("Password reset code is expired", 400))
+    }
+    // //
+    // if (user.passwordResetVerified) {
+    //     return next(new AppError("Password reset code is already verified", 400))
+    // }
+    //3- set password reset code to true
+    user.passwordResetVerified = true;
+    await user.save();
+    res.status(200).json({ status: "Success", message: "Password reset code is valid" });
+});
+
+// @desc    verify Reset Password
+// @route   PUT /api/auth/resetPassword
+// @access  Public
+exports.resetPassword = asyncHandler(async (req, res, next) => {
+    //1-Get user based on  email
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+        return next(new AppError(`There is no user with email address ${req.body.email}`, 404))
+    }
+    //2-Check if password reset code is verified
+    if (!user.passwordResetVerified) {
+        return next(new AppError("Password reset code is not verified", 400))
+    }
+    //3- update password
+    newPassword = req.body.newPassword;
+    confirmPassword = req.body.confirmPassword;
+    if (newPassword !== confirmPassword) {
+        return next(new AppError("Password confirmation does not match password", 400))
+    }
+    user.passwordChangedAt = Date.now();
+    user.passwordResetCode = undefined;
+    user.passwordResetCodeExpire = undefined;
+    user.passwordResetVerified = undefined;
+    await user.save();
+    //4- if every thing is ok generat token and send it to user
+    const token = generateToken(user._id);
+
+    res.status(200).json({ status: "Success", message: "Password reset successfully", token });
 });
