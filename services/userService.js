@@ -5,6 +5,7 @@ const sharp = require('sharp')
 const User = require('../models/userModel');
 const factury = require('./handlerFactury');
 const bcrypt = require('bcryptjs')
+const generateToken = require("../utils/generateToken")
 
 exports.uploadUserImage = uploadSingleImage("profileImage")
 

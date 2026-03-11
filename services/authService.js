@@ -5,11 +5,8 @@ const jwt = require('jsonwebtoken');
 const AppError = require('../utils/AppError');
 const sendEmail = require('../utils/sendEamil');
 
-// @desc    Generate JWT Token
-const generateToken = (payload) => {
-    return jwt.sign({ userId: payload }, process.env.JWT_SECRET_KEY, { expiresIn: process.env.JWT_EXPIRE_TIME })
+const generateToken=require("../utils/generateToken")
 
-}
 
 // @desc    signup
 // @route   POST /api/auth/signup
