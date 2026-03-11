@@ -1,7 +1,8 @@
 const { check, body } = require('express-validator');
 const validatorMiddleware = require('../../middleware/validatorMiddleware');
 const slugify = require('slugify');
-
+const Category = require('../../models/categoryModel');
+const AppError = require('../AppError');
 exports.getCategoryValidator = [
   check('id').isMongoId().withMessage('Invalid category id format'),
   validatorMiddleware,
@@ -11,6 +12,12 @@ exports.createCategoryValidator = [
   check('name')
     .notEmpty()
     .withMessage('Category name required')
+    .custom(async (value, { req }) => {
+      const category = await Category.findOne({ name: value });
+      if (category) {
+        throw new AppError('Category already exists', 400);
+      }
+    })
     .isLength({ min: 3 })
     .withMessage('Too short category name')
     .isLength({ max: 32 })

@@ -162,4 +162,64 @@ exports.changeUserPasswordValidator = [
     })
   ,
 
-  validatorMiddleware];
+  validatorMiddleware
+];
+
+// exports.UpdateLoggedUserPasswordValidator = [
+//   check('currentPassword').notEmpty().withMessage("you must provide current password"),
+//   check('confirmPassword').notEmpty().withMessage("you must provide confirm password"),
+//   check('password').notEmpty().withMessage("you must provide new password")
+//     .custom(async (value, { req }) => {
+//       const user = await User.findById(req.user._id);
+//       if (!user) {
+//         throw new AppError('User not found', 404);
+//       }
+//       const isCurrentPasswordValid = await bcrypt.compare(req.body.currentPassword, user.password);
+//       if (!isCurrentPasswordValid) {
+//         throw new AppError('Current password is incorrect', 400);
+//       }
+
+//       if (value !== req.body.confirmPassword) {
+//         throw new AppError('Password confirmation does not match password', 400);
+//       }
+//       return true;
+//     })
+//   ,
+
+//   validatorMiddleware]
+exports.updateLoggedUserDataValidator = [
+  check('name')
+    .optional()
+    .notEmpty()
+    .withMessage('User name required')
+    .isLength({ min: 3 })
+    .withMessage('Name must be at least 3 characters')
+    .isLength({ max: 32 })
+    .withMessage('Name must be at most 32 characters')
+    .custom((value, { req }) => {
+      req.body.slug = slugify(value);
+      return true;
+    }),
+
+  check('email')
+    .optional()
+    .notEmpty()
+    .withMessage('Email is required')
+    .isEmail()
+    .withMessage('Invalid email address')
+    .custom(async (value) => {
+      const user = await User.findOne({ email: value });
+      if (user) {
+        throw new AppError('Email already exists', 400);
+      }
+    }),
+
+  check('phone')
+    .optional()
+    .notEmpty()
+    .withMessage('Phone is required')
+    .isMobilePhone('ar-SY')
+    .withMessage('Invalid phone number'),
+
+  validatorMiddleware,
+]

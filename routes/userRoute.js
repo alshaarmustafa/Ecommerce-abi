@@ -8,15 +8,24 @@ const {
     deleteUser,
     updateUserPassword,
     uploadUserImage,
-    resizeImage
+    resizeImage,
+   
 } = require('../services/userService');
+const {
+    getloggedUserData,
+    updateLoggedUserData,
+    deleteLoggedUserData,
+    UpdateLoggedUserPassword,
+    activateLoggedUserData
+} = require('../services/loggedUser')
 
 const {
     getUserValidator,
     createUserValidator,
     updateUserValidator,
     deleteUserValidator,
-    changeUserPasswordValidator
+    changeUserPasswordValidator,
+    updateLoggedUserDataValidator
 } = require('../utils/validators/userValidator');
 
 //Autentication & Authorization
@@ -26,19 +35,32 @@ const userRoles = require('../utils/authorization/userRoles');
 
 
 
-router.put('/changepassword/:id', changeUserPasswordValidator, updateUserPassword)
+router.put('/changepassword', changeUserPasswordValidator, updateUserPassword);
+
+router.use(protect)
+
+// logged User Data
+router.get('/getMe', getloggedUserData, getUserById)
+
+router.put('/changeMyPassword', UpdateLoggedUserPassword)
+
+router.put('/changeMydata', updateLoggedUserDataValidator, updateLoggedUserData)
+
+router.delete('/deleteMe', deleteLoggedUserData)
+
+router.put('/activateMe',activateLoggedUserData )
 
 
+
+// Admin & Manager
 router.route('/')
 
     .get(
-        protect,
         allowedTo(userRoles.ADMIN, userRoles.MANAGER),
         getUsers
     )
 
     .post(
-        protect,
         allowedTo(userRoles.ADMIN, userRoles.MANAGER),
         uploadUserImage,
         resizeImage,
@@ -49,14 +71,12 @@ router.route('/')
 router.route('/:id')
 
     .get(
-        protect,
         allowedTo(userRoles.ADMIN, userRoles.MANAGER),
         getUserValidator,
         getUserById
     )
 
     .put(
-        protect,
         allowedTo(userRoles.ADMIN, userRoles.MANAGER),
         uploadUserImage,
         resizeImage,
@@ -65,7 +85,6 @@ router.route('/:id')
     )
 
     .delete(
-        protect,
         allowedTo(userRoles.ADMIN),
         deleteUserValidator,
         deleteUser
