@@ -38,13 +38,13 @@ exports.getCategoryById = factury.getOne(Category);
 
 // @desc    Create new category
 // @route   POST /api/categories
-// @access  Private/Admin
+// @access  Private/Admin-Manager
 exports.createCategory = factury.createOne(Category);
 
 
 // @desc    Update category
 // @route   PUT /api/categories/:id
-// @access  Private/Admin
+// @access  Private/Admin-Manager
 exports.updateCategory = factury.updateOne(Category);
 
 

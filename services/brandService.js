@@ -40,12 +40,12 @@ exports.getBrandById = factury.getOne(Brand);
 
 // @desc    Create new brand
 // @route   POST /api/brands
-// @access  Private/Admin
+// @access  Private/Admin-Manager
 exports.createBrand = factury.createOne(Brand);
 
 // @desc    Update brand
 // @route   PUT /api/brands/:id
-// @access  Private/Admin
+// @access  Private/Admin-Manager
 exports.updateBrand = factury.updateOne(Brand);
 
 // @desc    Delete brand

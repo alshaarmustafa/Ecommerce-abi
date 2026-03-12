@@ -11,7 +11,17 @@ const {
     resizeImage
 } = require('../services/categoryService');
 
-const { getCategoryValidator, createCategoryValidator, updateCategoryValidator, deleteCategoryValidator } = require('../utils/validators/categoryValidator');
+const {
+    getCategoryValidator,
+    createCategoryValidator,
+    updateCategoryValidator,
+    deleteCategoryValidator
+} = require('../utils/validators/categoryValidator');
+
+//Autentication & Authorization
+const { protect } = require('../middleware/verifyToken');
+const allowedTo = require('../utils/authorization/allowedTo');
+const userRoles = require('../utils/authorization/userRoles');
 
 
 
@@ -23,6 +33,8 @@ router.route('/')
     .get(getCategories)
 
     .post(
+        protect,
+        allowedTo(userRoles.ADMIN, userRoles.MANAGER),
         uploadCategoryImage,
         resizeImage,
         createCategoryValidator,
@@ -33,13 +45,20 @@ router.route('/:id')
     .get(getCategoryValidator, getCategoryById)
 
     .put(
+        protect,
+        allowedTo(userRoles.ADMIN, userRoles.MANAGER),
         uploadCategoryImage,
         resizeImage,
         updateCategoryValidator,
         updateCategory
     )
 
-    .delete(deleteCategoryValidator, deleteCategory);
+    .delete(
+        protect,
+        allowedTo(userRoles.ADMIN),
+        deleteCategoryValidator,
+        deleteCategory
+    );
 
 
 
