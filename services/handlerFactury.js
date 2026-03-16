@@ -11,6 +11,7 @@ exports.deleteOne = (Model) => asyncHandler(async (req, res) => {
     if (!document) {
         res.status(404).json({ message: `No document for this id ${id}` });
     }
+    await document.deleteOne();
     res.status(204).json({ data: null });
 });
 
@@ -18,11 +19,11 @@ exports.updateOne = (Model) => asyncHandler(async (req, res) => {
     //  Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'`
     // returnDocument: 'before' // يرجع البيانات قبل التعديل
     // returnDocument: 'after'  // يرجع البيانات بعد التعديل
-    const document = await Model.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const document = await Model.findByIdAndUpdate(req.params.id, req.body, { returnDocument: 'after', runValidators: true });
     if (!document) {
         res.status(404).json({ message: `No document for this id ${id}` });
     }
-
+    await document.save();
     res.status(200).json({ data: document });
 });
 
@@ -31,9 +32,13 @@ exports.createOne = (Model) => asyncHandler(async (req, res) => {
     res.status(201).json({ data: newDocument });
 });
 
-exports.getOne = (Model) => asyncHandler(async (req, res) => {
+exports.getOne = (Model, populateOptions) => asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const document = await Model.findById(id);
+    let query = Model.findById(id);
+    if (populateOptions) {
+        query = query.populate(populateOptions);
+    }
+    const document = await query;
     if (!document) {
         res.status(404).json({ message: `No document for this id ${id}` });
     }

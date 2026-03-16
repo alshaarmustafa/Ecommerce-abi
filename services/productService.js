@@ -54,7 +54,10 @@ exports.getProducts = factury.getAll(Product, 'Product');
 // @desc    Get product by id 
 // @route   GET /api/products/:id
 // @access  Public
-exports.getProdcutById = factury.getOne(Product);
+exports.getProdcutById = factury.getOne(Product, {
+  path: 'reviews',
+  select: 'title ratings user -product'
+});
 
 // @desc    Create new product
 // @route   POST /api/products

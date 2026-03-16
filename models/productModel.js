@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const User = require('./userModel');
 
 const productSchema = new mongoose.Schema({
     title: {
@@ -76,7 +77,9 @@ const productSchema = new mongoose.Schema({
         default: 0,
     },
 
-}, { timestamps: true });
+}, { timestamps: true ,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }});
 
 productSchema.pre(/^find/, function () {
     this.populate({ path: 'category', select: 'name -_id' })
@@ -104,7 +107,21 @@ productSchema.post('save', (doc) => {
     setImageUrl(doc)
 })
 
+productSchema.virtual('reviews', {
+    ref: 'Review',
+    foreignField: 'product',
+    localField: '_id',
+})
 
+productSchema.post('findOneAndDelete', async function (doc) {
 
+  if (doc) {
+    await User.updateMany(
+      { wishlist: doc._id },
+      { $pull: { wishlist: doc._id } }
+    );
+  }
+
+});
 
 module.exports = mongoose.model('Product', productSchema);
