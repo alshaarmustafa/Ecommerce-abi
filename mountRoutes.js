@@ -4,6 +4,9 @@ const brandRoute = require('./routes/brandRoute');
 const productRoute = require('./routes/productRoute');
 const userRoute = require('./routes/userRoute');
 const authRoute = require('./routes/authRoute');
+const reviewRoute = require('./routes/reviewRoute');
+const wishlistRoute = require('./routes/wishlistRoute');
+const addressRoute = require('./routes/addressRoute');
 
 const mountRoutes = (app) => {
   app.use('/api/categories', categoryRoute);
@@ -12,6 +15,10 @@ const mountRoutes = (app) => {
   app.use('/api/products', productRoute);
   app.use('/api/users', userRoute);
   app.use('/api/auth', authRoute);
+  app.use('/api/reviews', reviewRoute);
+  app.use('/api/wishlist', wishlistRoute);
+  app.use('/api/addresses', addressRoute);
+
 };
 
 module.exports = mountRoutes;

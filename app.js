@@ -7,7 +7,6 @@ require('./config/db');
 
 const mountRoutes = require('./mountRoutes');
 
-mountRoutes(app);
 
 
 
@@ -26,6 +25,8 @@ if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
     console.log(`mode: ${process.env.NODE_ENV}`);
 }
+mountRoutes(app);
+
 
 
 
