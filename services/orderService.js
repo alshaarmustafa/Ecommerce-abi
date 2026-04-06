@@ -205,3 +205,28 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
   //4) send response
   res.status(200).json({ status: "success", data: session });
 });
+
+// createCartOrder(async (session) => {
+//   const cartId = session.client_reference_id;
+//   const shippingAddress = session.metadata;
+
+// });
+
+
+exports.webhookCheckout = asyncHandler(async (req, res, next) => {
+  const signature = request.headers["stripe-signature"];
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      signature,
+      process.env.STRIPE_WEBHOOK_SECRET,
+    );
+  } catch (err) {
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+  if (event.type === "checkout.session.completed") {
+    console.log("create order Here.....");
+    createCartOrder(event.data.object);
+  }
+});

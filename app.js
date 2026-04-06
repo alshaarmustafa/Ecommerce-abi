@@ -3,7 +3,7 @@ const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors')
 const compression = require('compression')
-
+const { webhookCheckout } = require('./services/orderService');
 const app = express();
 app.use(cors())
 app.use(compression())
@@ -12,7 +12,7 @@ require('./config/db');
 
 const mountRoutes = require('./mountRoutes');
 
-
+app.post('/webhook-checkout', express.raw({type: 'application/json'}),webhookCheckout);
 
 
 const AppError = require('./utils/AppError');
