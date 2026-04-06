@@ -11,10 +11,14 @@ const cartSchema = new mongoose.Schema({
             },
             quantity: {
                 type: Number,
-                default: 1
+                default: 1,
+                 min: [1, 'quantity must be above or equal 1'],
             },
             color: String,
-            price: Number
+            price: {
+                type: Number,
+                 min: [0, 'price  must be above or equal 0'],
+            }
         },
     ],
     totalCartPrice: Number,
