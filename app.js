@@ -9,9 +9,9 @@ app.use(cors())
 app.use(compression())
 require('dotenv').config();
 require('./config/db');
+app.post('/webhook-checkout', express.raw({type: 'application/json'}),webhookCheckout);
 const mountRoutes = require('./mountRoutes');
 
-app.post('/webhook-checkout', express.raw({type: 'application/json'}),webhookCheckout);
 
 
 const AppError = require('./utils/AppError');
