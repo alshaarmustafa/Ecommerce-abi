@@ -13,6 +13,8 @@ app.post(
 app.use(cors())
 app.use(compression())
 require('dotenv').config();
+
+console.log("ENV TEST:", process.env.STRIPE_WEBHOOK_SECRET);
 require('./config/db');
 const mountRoutes = require('./mountRoutes');
 
