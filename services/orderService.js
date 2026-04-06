@@ -214,6 +214,7 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
 
 
 exports.webhookCheckout = asyncHandler(async (req, res, next) => {
+  console.log("Webhook hit");
   const signature = req.headers["stripe-signature"];
   let event;
   try {
@@ -229,4 +230,5 @@ exports.webhookCheckout = asyncHandler(async (req, res, next) => {
     console.log("create order Here.....");
     // createCartOrder(event.data.object);
   }
+  res.status(200).json({ received: true });
 });
