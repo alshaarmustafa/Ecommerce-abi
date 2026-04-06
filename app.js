@@ -1,7 +1,12 @@
 const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
+const cors = require('cors')
+const compression = require('compression')
+
 const app = express();
+app.use(cors())
+app.use(compression())
 require('dotenv').config();
 require('./config/db');
 
