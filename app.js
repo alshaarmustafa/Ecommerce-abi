@@ -5,7 +5,11 @@ const cors = require('cors')
 const compression = require('compression')
 const { webhookCheckout } = require('./services/orderService');
 const app = express();
-app.post('/webhook-checkout', express.raw({type: 'application/json'}),webhookCheckout);
+app.post(
+  '/api/webhook-checkout',
+  express.raw({ type: 'application/json' }),
+  webhookCheckout
+);
 app.use(cors())
 app.use(compression())
 require('dotenv').config();
