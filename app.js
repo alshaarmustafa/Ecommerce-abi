@@ -9,15 +9,14 @@ app.use(cors())
 app.use(compression())
 require('dotenv').config();
 require('./config/db');
-console.log(`TEST....`);
+console.log(`TEST ........`);
 const mountRoutes = require('./mountRoutes');
 
 app.post('/webhook-checkout', express.raw({type: 'application/json'}),webhookCheckout);
 
 
 const AppError = require('./utils/AppError');
-const globalErrorHandling = require('./middleware/globalError');
-const console = require('console');
+const globalErrorHandling = require('./middleware/globalError')
 
 
 app.use(express.static(path.join(__dirname, 'uploads')));
