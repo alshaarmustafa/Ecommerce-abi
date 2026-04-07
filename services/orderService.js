@@ -230,7 +230,7 @@ const createCartOrder = async (session) => {
     totalOrderPrice: orderPrice,
     isPaid: true,
     paidAt: Date.now(),
-    paymentMethod: "cart",
+    paymentMethodType: "cart",
   });
 
   //4)after creating order decrement product quantity and increment product sold
