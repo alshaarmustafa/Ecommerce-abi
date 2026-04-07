@@ -198,8 +198,8 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
       quantity: item.quantity,
     })),
     mode: "payment",
-    success_url: `${req.protocol}://${req.get("host")}/orders`,
-    cancel_url: `${req.protocol}://${req.get("host")}/cart`,
+    success_url: `${req.protocol}://${req.get("host")}/api/orders`,
+    cancel_url: `${req.protocol}://${req.get("host")}/api/cart`,
     customer_email: req.user.email,
     client_reference_id: req.params.cartId,
     metadata: req.body.shippingAddress,
@@ -208,7 +208,7 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
   res.status(200).json({ status: "success", data: session });
 });
 
-const  createCartOrder = async (session) => {
+const createCartOrder = async (session) => {
   const cartId = session.client_reference_id;
   const shippingAddress = session.metadata;
   const orderPrice = session.amount_total / 100;
