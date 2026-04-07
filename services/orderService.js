@@ -214,9 +214,10 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
 
 
 exports.webhookCheckout = asyncHandler(async (req, res, next) => {
-  console.log("Webhook hit");
+  console.log("1️⃣ Webhook hit");
   const signature = req.headers["stripe-signature"];
   let event;
+
   try {
     event = stripe.webhooks.constructEvent(
       req.body,
@@ -224,11 +225,16 @@ exports.webhookCheckout = asyncHandler(async (req, res, next) => {
       process.env.STRIPE_WEBHOOK_SECRET,
     );
   } catch (err) {
+    console.log("❌ Signature Error:", err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
+
+  // أضف هذا السطر فوراً
+  console.log("🔍 Received Event Type:", event.type); 
+
   if (event.type === "checkout.session.completed") {
-    console.log("create order Here.....");
-    // createCartOrder(event.data.object);
+    console.log("✅ SUCCESS: create order Here.....");
   }
-  res.status(200).json({ received: true });
+  
 });
+
