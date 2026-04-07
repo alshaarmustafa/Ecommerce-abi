@@ -208,7 +208,7 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
   res.status(200).json({ status: "success", data: session });
 });
 
-createCartOrder(async (session) => {
+const  createCartOrder = async (session) => {
   const cartId = session.client_reference_id;
   const shippingAddress = session.metadata;
   const orderPrice = session.amount_total / 100;
@@ -251,14 +251,14 @@ createCartOrder(async (session) => {
     //5)clear cart depend on cartId
     await Cart.findByIdAndDelete(cartId);
   }
-});
+};
 
 // @desc  this webhook will call when checkout session complete and create order with paid status and decrement product quantity and increment product sold and clear cart
 // @route   POST /api/webhook-checkout
 // @access  protect/USER
 exports.webhookCheckout = asyncHandler(async (req, res, next) => {
   const signature = req.headers["stripe-signature"];
-  
+
   let event;
 
   try {
