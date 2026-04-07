@@ -2,6 +2,8 @@ const asyncHandler = require("express-async-handler");
 const AppError = require("../utils/AppError");
 const factury = require("./handlerFactury");
 const stripe = require("stripe")(process.env.STRIPE_SECRET);
+
+const User = require("../models/userModel");
 const Product = require("../models/productModel");
 const Cart = require("../models/cartModel");
 const Order = require("../models/orderModel");
@@ -206,15 +208,55 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
   res.status(200).json({ status: "success", data: session });
 });
 
-// createCartOrder(async (session) => {
-//   const cartId = session.client_reference_id;
-//   const shippingAddress = session.metadata;
+createCartOrder(async (session) => {
+  const cartId = session.client_reference_id;
+  const shippingAddress = session.metadata;
+  const orderPrice = session.amount_total / 100;
+  const cart = await Cart.findById(cartId);
+  if (!cart) {
+    console.error(`Cart not found for ID: ${cartId}`);
+    return;
+  }
+  const user = await User.findOne({ email: session.customer_email });
+  if (!user) {
+    console.error(`User not found for email: ${session.customer_email}`);
+    return;
+  }
+  //3)create order with  payment method type cart
+  const order = await Order.create({
+    user: user._id,
+    cartItems: cart.cartItems,
+    shippingAddress,
+    totalOrderPrice: orderPrice,
+    isPaid: true,
+    paidAt: Date.now(),
+    paymentMethod: "cart",
+  });
 
-// });
+  //4)after creating order decrement product quantity and increment product sold
+  if (order) {
+    const bulkOption = cart.cartItems.map((item) => ({
+      updateOne: {
+        filter: { _id: item.product },
+        update: {
+          $inc: {
+            quantity: -item.quantity,
+            sold: item.quantity,
+          },
+        },
+      },
+    }));
+    await Product.bulkWrite(bulkOption, {});
 
+    //5)clear cart depend on cartId
+    await Cart.findByIdAndDelete(cartId);
+  }
+});
 
+// @desc  this webhook will call when checkout session complete and create order with paid status and decrement product quantity and increment product sold and clear cart
+// @route   POST /api/webhook-checkout
+// @access  protect/USER
 exports.webhookCheckout = asyncHandler(async (req, res, next) => {
-  console.log("1️⃣ Webhook hit");
   const signature = req.headers["stripe-signature"];
   let event;
 
@@ -228,11 +270,8 @@ exports.webhookCheckout = asyncHandler(async (req, res, next) => {
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  console.log("🔍 Received Event Type:", event.type); 
-
   if (event.type === "checkout.session.completed") {
-    console.log("✅ SUCCESS: create order Here.....");
+    createCartOrder(event.data.object);
   }
   res.status(200).json({ received: true });
 });
-
