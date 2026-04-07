@@ -258,6 +258,7 @@ createCartOrder(async (session) => {
 // @access  protect/USER
 exports.webhookCheckout = asyncHandler(async (req, res, next) => {
   const signature = req.headers["stripe-signature"];
+  
   let event;
 
   try {
