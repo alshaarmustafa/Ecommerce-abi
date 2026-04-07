@@ -22,6 +22,10 @@ app.post(
     return webhookCheckout(req, res, next);
   }
 );
+app.get('/test', (req, res) => {
+  console.log("🔥 TEST HIT");
+  res.send("Server is awake");
+});
 
 // Middleware بعد الـ webhook
 app.use(cors());
