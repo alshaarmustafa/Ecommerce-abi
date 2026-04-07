@@ -12,22 +12,14 @@ require('./config/db');
 
 const app = express();
 
-// 🔹 webhook route لازم يكون أول شيء قبل أي middleware
 app.post(
   '/api/webhook-checkout',
   express.raw({ type: 'application/json' }),
-  (req, res, next) => {
-    console.log("🔥 WEBHOOK HIT");
-    console.log("STRIPE SECRET:", process.env.STRIPE_WEBHOOK_SECRET);
-    return webhookCheckout(req, res, next);
-  }
+  webhookCheckout,
 );
-app.get('/test', (req, res) => {
-  console.log("🔥 TEST HIT");
-  res.send("Server is awake");
-});
 
-// Middleware بعد الـ webhook
+
+
 app.use(cors());
 app.use(compression());
 app.use(express.json());
