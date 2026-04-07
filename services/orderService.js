@@ -225,11 +225,9 @@ exports.webhookCheckout = asyncHandler(async (req, res, next) => {
       process.env.STRIPE_WEBHOOK_SECRET,
     );
   } catch (err) {
-    console.log("❌ Signature Error:", err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  // أضف هذا السطر فوراً
   console.log("🔍 Received Event Type:", event.type); 
 
   if (event.type === "checkout.session.completed") {
