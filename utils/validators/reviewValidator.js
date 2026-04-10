@@ -29,7 +29,7 @@ exports.createReviewValidator = [
     }),
 
   check('product').isMongoId().withMessage('Invalid product id format'),
-  ,
+  
   validatorMiddleware,
 ];
 
@@ -84,6 +84,6 @@ exports.deleteReviewValidator = [
 
       return true;
     }),
-  ,
+  
   validatorMiddleware,
 ];

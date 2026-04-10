@@ -29,6 +29,7 @@ const subcategoryRoute = require('./subCategoryRoute');
 
 router.use('/:categoryId/subcategories', subcategoryRoute);
 
+
 router.route('/')
     .get(getCategories)
 

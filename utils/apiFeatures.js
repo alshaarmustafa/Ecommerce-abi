@@ -18,11 +18,12 @@ class ApiFeatures {
   }
 
   sort() {
+    console.log(this.queryString.sort);
     if (this.queryString.sort) {
       const sortBy = this.queryString.sort.split(',').join(' ');
       this.mongooseQuery = this.mongooseQuery.sort(sortBy);
     } else {
-      this.mongooseQuery = this.mongooseQuery.sort('-createAt');
+      this.mongooseQuery = this.mongooseQuery.sort('-createdAt');
     }
     return this;
   }
